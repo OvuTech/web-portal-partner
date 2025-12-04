@@ -33,37 +33,22 @@ function VerifyEmailContent() {
         const API_URL = 'https://ovu-transport-staging.fly.dev';
         let response;
         
-        try {
-          // Try the Next.js proxy route first
-          response = await fetch('/api/v1/partners/auth/verify-email', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token }),
-          });
-          
-          // If proxy route returns 404, call backend directly
-          if (response.status === 404) {
-            console.log('[Verify Email Page] Proxy route not found, calling backend directly');
-            const backendUrl = `${API_URL}/api/v1/partners/auth/verify-email?token=${encodeURIComponent(token)}`;
-            response = await fetch(backendUrl, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-          }
-        } catch (proxyError) {
-          // If proxy fails, call backend directly
-          console.log('[Verify Email Page] Proxy route failed, calling backend directly');
-          const backendUrl = `${API_URL}/api/v1/partners/auth/verify-email?token=${encodeURIComponent(token)}`;
-          response = await fetch(backendUrl, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+        // Try the Next.js proxy route first
+        response = await fetch('/api/v1/partners/auth/verify-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        });
+        
+        // If proxy route returns 404, the route isn't deployed
+        // Show a helpful error message instead of trying direct call (which will fail CORS)
+        if (response.status === 404) {
+          console.error('[Verify Email Page] Proxy route not found (404). The API route needs to be deployed.');
+          setError('Verification service is temporarily unavailable. Please contact support or try again later.');
+          setIsLoading(false);
+          return;
         }
 
         console.log('[Verify Email Page] Response status:', response.status);
