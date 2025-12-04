@@ -33,8 +33,19 @@ function VerifyEmailContent() {
         const API_URL = 'https://ovu-transport-staging.fly.dev';
         let response;
         
-        // Try the Next.js proxy route first
-        response = await fetch('/api/v1/partners/auth/verify-email', {
+        // Try the Next.js proxy route first (try simpler path first, then fallback to v1 path)
+        let response;
+        try {
+          response = await fetch('/api/auth/verify-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token }),
+          });
+        } catch (e) {
+          // Fallback to v1 path
+          response = await fetch('/api/v1/partners/auth/verify-email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
