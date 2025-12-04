@@ -17,39 +17,25 @@ export async function GET(request: NextRequest) {
     console.log('[Verify Email] Verifying token:', token);
     console.log('[Verify Email] API_URL:', API_URL);
 
-    // The endpoint exists but requires GET method with token as query parameter
-    // POST returns "Method Not Allowed", so we use GET
     const endpoint = `${API_URL}/api/v1/partners/auth/verify-email?token=${encodeURIComponent(token)}`;
     
     console.log('[Verify Email] Calling endpoint:', endpoint);
     
-    let response;
-    try {
-      response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (fetchError: any) {
-      console.error('[Verify Email] Fetch error:', fetchError);
-      return NextResponse.json(
-        { detail: `Failed to connect to verification service: ${fetchError.message}` },
-        { status: 503 }
-      );
-    }
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     console.log('[Verify Email] Response status:', response.status);
-    console.log('[Verify Email] Response headers:', Object.fromEntries(response.headers.entries()));
 
-    // Check if response is JSON
     const contentType = response.headers.get('content-type');
     let data;
     
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
     } else {
-      // Response is not JSON (likely HTML error page)
       const text = await response.text();
       console.error('[Verify Email] Non-JSON response:', text.substring(0, 200));
       return NextResponse.json(
@@ -73,6 +59,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
-
-// Route file
