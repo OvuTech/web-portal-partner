@@ -74,5 +74,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Ensure this route is exported correctly for Next.js App Router
 
