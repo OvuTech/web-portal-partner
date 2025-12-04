@@ -53,13 +53,26 @@ export async function POST(request: NextRequest) {
     console.log('[Partner Register] API_URL:', API_URL);
     console.log('[Partner Register] Registration data:', JSON.stringify(registrationData));
 
-    const response = await fetch(`${API_URL}/api/v1/partners/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(registrationData),
-    });
+    const backendUrl = `${API_URL}/api/v1/partners/auth/register`;
+    console.log('[Partner Register] Backend URL:', backendUrl);
+
+    let response;
+    try {
+      response = await fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationData),
+      });
+    } catch (fetchError: any) {
+      console.error('[Partner Register] Fetch error:', fetchError);
+      console.error('[Partner Register] Fetch error message:', fetchError?.message);
+      return NextResponse.json(
+        { detail: `Failed to connect to registration service: ${fetchError.message}`, url: backendUrl },
+        { status: 503 }
+      );
+    }
 
     console.log('[Partner Register] Response status:', response.status);
     console.log('[Partner Register] Response headers:', Object.fromEntries(response.headers.entries()));
