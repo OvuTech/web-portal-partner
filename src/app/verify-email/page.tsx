@@ -31,24 +31,22 @@ function VerifyEmailContent() {
         // Try the Next.js proxy route (try simpler path first, then fallback to v1 path)
         let response;
         
-        // First try the simpler path
-        response = await fetch('/api/auth/verify-email', {
-          method: 'POST',
+        // First try the simpler path with GET and token as query parameter
+        response = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ token }),
         });
         
         // If simpler path returns 404, try the v1 path
         if (response.status === 404) {
           console.log('[Verify Email Page] Simple path not found, trying v1 path');
-          response = await fetch('/api/v1/partners/auth/verify-email', {
-            method: 'POST',
+          response = await fetch(`/api/v1/partners/auth/verify-email?token=${encodeURIComponent(token)}`, {
+            method: 'GET',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ token }),
           });
         }
         
