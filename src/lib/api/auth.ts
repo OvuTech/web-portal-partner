@@ -52,6 +52,11 @@ export interface ForgotPasswordRequest {
   email: string;
 }
 
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
 export const authService = {
   // Register a new partner (self-service registration via /api/v1/partners/auth/register)
   register: async (data: PartnerRegisterRequest): Promise<PartnerRegisterResponse> => {
@@ -78,6 +83,12 @@ export const authService = {
   // Forgot password
   forgotPassword: async (data: ForgotPasswordRequest): Promise<{ message: string }> => {
     const response = await apiClient.post('/auth/forgot-password', data);
+    return response.data;
+  },
+
+  // Reset password
+  resetPassword: async (data: ResetPasswordRequest): Promise<{ message: string }> => {
+    const response = await apiClient.post('/v1/partners/auth/reset-password', data);
     return response.data;
   },
 
