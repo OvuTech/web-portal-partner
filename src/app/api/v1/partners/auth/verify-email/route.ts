@@ -74,3 +74,5 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Ensure this route is exported correctly for Next.js App Router
+
