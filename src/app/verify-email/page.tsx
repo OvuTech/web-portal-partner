@@ -29,7 +29,8 @@ function VerifyEmailContent() {
 
       try {
         // Try Next.js API route first, fallback to direct backend call
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ovu-transport-staging.fly.dev';
+        // Use the backend URL directly (hardcoded for now since env vars might not be available)
+        const API_URL = 'https://ovu-transport-staging.fly.dev';
         let response;
         
         try {
