@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function VerifyPage() {
+function VerifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
@@ -202,6 +202,18 @@ export default function VerifyPage() {
           )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-ovu-primary" />
+      </div>
+    }>
+      <VerifyPageContent />
+    </Suspense>
   );
 }
 
