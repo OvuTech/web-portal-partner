@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Verify Email] Verifying token:', token);
+    console.log('[Verify Email] API_URL:', API_URL);
 
     // Call the backend API to verify the email token
     const response = await fetch(`${API_URL}/api/v1/partners/auth/verify-email`, {
@@ -25,10 +26,26 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({ token }),
     });
 
-    const data = await response.json();
-
     console.log('[Verify Email] Response status:', response.status);
-    console.log('[Verify Email] Response:', JSON.stringify(data));
+    console.log('[Verify Email] Response headers:', Object.fromEntries(response.headers.entries()));
+
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      // Response is not JSON (likely HTML error page)
+      const text = await response.text();
+      console.error('[Verify Email] Non-JSON response:', text.substring(0, 200));
+      return NextResponse.json(
+        { detail: 'Backend endpoint returned an error. Please check if the verify-email endpoint exists.' },
+        { status: response.status || 500 }
+      );
+    }
+
+    console.log('[Verify Email] Response data:', JSON.stringify(data));
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status });

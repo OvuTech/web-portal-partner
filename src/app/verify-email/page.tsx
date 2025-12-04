@@ -34,7 +34,20 @@ function VerifyEmailContent() {
           body: JSON.stringify({ token }),
         });
 
-        const data = await response.json();
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        let data;
+        
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          // Response is not JSON (likely HTML error page)
+          const text = await response.text();
+          console.error('Non-JSON response:', text.substring(0, 200));
+          setError('Verification endpoint returned an error. Please contact support.');
+          setIsLoading(false);
+          return;
+        }
 
         if (!response.ok) {
           setError(data.detail || 'Verification failed');
