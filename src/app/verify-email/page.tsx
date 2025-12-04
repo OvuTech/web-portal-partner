@@ -28,29 +28,15 @@ function VerifyEmailContent() {
       console.log('[Verify Email Page] Full URL:', window.location.href);
 
       try {
-        // Try the Next.js proxy route (try simpler path first, then fallback to v1 path)
-        let response;
-        
-        // First try the simpler path with GET and token as query parameter
-        response = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
+        // Call the Next.js proxy route at /api/v1/partners/auth/verify-email
+        const response = await fetch(`/api/v1/partners/auth/verify-email?token=${encodeURIComponent(token)}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         });
         
-        // If simpler path returns 404, try the v1 path
-        if (response.status === 404) {
-          console.log('[Verify Email Page] Simple path not found, trying v1 path');
-          response = await fetch(`/api/v1/partners/auth/verify-email?token=${encodeURIComponent(token)}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        }
-        
-        // If both routes return 404, the route isn't deployed
+        // If route returns 404, the route isn't deployed
         if (response.status === 404) {
           console.error('[Verify Email Page] Proxy route not found (404). The API route needs to be deployed.');
           setError('Verification service is temporarily unavailable. Please contact support or try again later.');
