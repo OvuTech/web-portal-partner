@@ -17,51 +17,30 @@ export async function GET(request: NextRequest) {
     console.log('[Verify Email] Verifying token:', token);
     console.log('[Verify Email] API_URL:', API_URL);
 
-    // The endpoint exists but requires GET method with token as query parameter
-    // POST returns "Method Not Allowed", so we use GET
     const endpoint = `${API_URL}/api/v1/partners/auth/verify-email?token=${encodeURIComponent(token)}`;
     
     console.log('[Verify Email] Calling endpoint:', endpoint);
     
-    let response;
-    try {
-      response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (fetchError: any) {
-      console.error('[Verify Email] Fetch error:', fetchError);
-      return NextResponse.json(
-        { detail: `Failed to connect to verification service: ${fetchError.message}` },
-        { status: 503 }
-      );
-    }
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     console.log('[Verify Email] Response status:', response.status);
-    console.log('[Verify Email] Response headers:', Object.fromEntries(response.headers.entries()));
 
-    // Parse response - backend should return JSON
+    const contentType = response.headers.get('content-type');
     let data;
-    try {
+    
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
       const text = await response.text();
-      // Try to parse as JSON
-      try {
-        data = JSON.parse(text);
-      } catch (parseError) {
-        // If not JSON, return the text as error
-        console.error('[Verify Email] Non-JSON response:', text.substring(0, 200));
-        return NextResponse.json(
-          { detail: text || 'Backend endpoint returned an error' },
-          { status: response.status || 500 }
-        );
-      }
-    } catch (error) {
-      console.error('[Verify Email] Error reading response:', error);
+      console.error('[Verify Email] Non-JSON response:', text.substring(0, 200));
       return NextResponse.json(
-        { detail: 'Failed to read backend response' },
-        { status: 500 }
+        { detail: 'Backend endpoint returned an error. Please check if the verify-email endpoint exists.' },
+        { status: response.status || 500 }
       );
     }
 
@@ -80,6 +59,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
-
-// Route file
