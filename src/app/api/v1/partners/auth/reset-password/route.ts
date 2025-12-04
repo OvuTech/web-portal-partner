@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         token: body.token,
-        password: body.password,
+        new_password: body.password,
       }),
     });
 
