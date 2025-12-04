@@ -24,8 +24,12 @@ function VerifyEmailContent() {
         return;
       }
 
+      console.log('[Verify Email Page] Token from URL:', token);
+      console.log('[Verify Email Page] Full URL:', window.location.href);
+
       try {
         // Call the API to verify the email with the token
+        // The Next.js API route will convert this to a GET request to the backend
         const response = await fetch('/api/v1/partners/auth/verify-email', {
           method: 'POST',
           headers: {
@@ -33,6 +37,8 @@ function VerifyEmailContent() {
           },
           body: JSON.stringify({ token }),
         });
+
+        console.log('[Verify Email Page] Response status:', response.status);
 
         // Check if response is JSON
         const contentType = response.headers.get('content-type');
@@ -49,8 +55,12 @@ function VerifyEmailContent() {
           return;
         }
 
+        console.log('[Verify Email Page] Response data:', data);
+
         if (!response.ok) {
-          setError(data.detail || 'Verification failed');
+          const errorMessage = data.detail || data.message || 'Verification failed';
+          console.error('[Verify Email Page] Verification failed:', errorMessage);
+          setError(errorMessage);
           setIsLoading(false);
           return;
         }
