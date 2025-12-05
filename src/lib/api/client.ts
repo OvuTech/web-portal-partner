@@ -31,14 +31,28 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
+      // Log the error details before redirecting
+      console.error('[API Client] 401 Unauthorized:', {
+        url: error.config?.url,
+        status: error.response.status,
+        data: error.response.data,
+      });
+      
       // Token expired or invalid - redirect to login
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('partner_access_token');
-        localStorage.removeItem('partner_refresh_token');
-        localStorage.removeItem('partner_data');
-        // Only redirect if not already on login page
-        if (!window.location.pathname.includes('/login')) {
-          window.location.href = '/login';
+        // Don't redirect immediately - let the error propagate so the UI can show it
+        // Only redirect if we're not on a page that handles errors gracefully
+        const currentPath = window.location.pathname;
+        const errorHandlingPages = ['/dashboard/settings'];
+        
+        if (!errorHandlingPages.some(path => currentPath.includes(path))) {
+          localStorage.removeItem('partner_access_token');
+          localStorage.removeItem('partner_refresh_token');
+          localStorage.removeItem('partner_data');
+          // Only redirect if not already on login page
+          if (!currentPath.includes('/login')) {
+            window.location.href = '/login';
+          }
         }
       }
     }

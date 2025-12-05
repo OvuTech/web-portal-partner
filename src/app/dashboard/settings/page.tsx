@@ -80,6 +80,17 @@ export default function SettingsPage() {
 
     setIsChangingPassword(true);
     try {
+      // Verify we have a token before making the request
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('partner_access_token');
+        if (!token) {
+          toast.error('You must be logged in to change your password');
+          setIsChangingPassword(false);
+          return;
+        }
+        console.log('[Change Password] Token exists in localStorage');
+      }
+      
       await authService.changePassword({
         current_password: currentPassword,
         new_password: newPassword,
@@ -89,6 +100,9 @@ export default function SettingsPage() {
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
+      console.error('[Change Password] Full error:', error);
+      console.error('[Change Password] Error response:', error.response);
+      
       let message = 'Failed to change password. Please try again.';
       
       // Handle Pydantic validation errors
@@ -105,7 +119,9 @@ export default function SettingsPage() {
         message = error.message;
       }
       
+      // Don't redirect on settings page - show error instead
       toast.error(message);
+      console.error('[Change Password] Error message:', message);
     } finally {
       setIsChangingPassword(false);
     }
