@@ -80,7 +80,7 @@ export default function SettingsPage() {
 
     setIsChangingPassword(true);
     try {
-      // Verify we have a token before making the request
+      // Verify we have a token and it's valid before making the request
       if (typeof window !== 'undefined') {
         const token = localStorage.getItem('partner_access_token');
         if (!token) {
@@ -89,6 +89,17 @@ export default function SettingsPage() {
           return;
         }
         console.log('[Change Password] Token exists in localStorage');
+        
+        // Verify token is valid by checking if we can get partner info
+        try {
+          const partner = await authService.getCurrentPartner();
+          console.log('[Change Password] Token is valid, partner ID:', partner.id);
+        } catch (verifyError: any) {
+          console.error('[Change Password] Token validation failed:', verifyError);
+          toast.error('Your session has expired. Please log in again.');
+          setIsChangingPassword(false);
+          return;
+        }
       }
       
       await authService.changePassword({

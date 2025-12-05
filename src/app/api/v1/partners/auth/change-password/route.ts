@@ -20,8 +20,13 @@ export async function PUT(request: NextRequest) {
     // Ensure token has Bearer prefix
     const token = authHeader.startsWith('Bearer ') ? authHeader : `Bearer ${authHeader}`;
     
-    console.log('[Change Password] Token received:', token.substring(0, 30) + '...');
+    console.log('[Change Password] Token received:', token.substring(0, 50) + '...');
+    console.log('[Change Password] Token length:', token.length);
     console.log('[Change Password] Request body keys:', Object.keys(body));
+    console.log('[Change Password] Full request headers:', {
+      'Content-Type': 'application/json',
+      'Authorization': token.substring(0, 30) + '...',
+    });
 
     // Validate required fields
     if (!body.current_password || !body.new_password) {
@@ -65,7 +70,18 @@ export async function PUT(request: NextRequest) {
     const data = await response.json();
     
     console.log('[Change Password] Backend response status:', response.status);
-    console.log('[Change Password] Backend response:', JSON.stringify(data).substring(0, 200));
+    console.log('[Change Password] Backend response headers:', Object.fromEntries(response.headers.entries()));
+    console.log('[Change Password] Backend response:', JSON.stringify(data));
+    
+    // If we get "Invalid token type", log more details
+    if (response.status === 401 && data.detail && data.detail.includes('token type')) {
+      console.error('[Change Password] TOKEN TYPE ERROR - Full details:', {
+        status: response.status,
+        detail: data.detail,
+        tokenPrefix: token.substring(0, 50),
+        requestUrl: `${API_URL}/api/v1/partners/auth/change-password`,
+      });
+    }
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status });
