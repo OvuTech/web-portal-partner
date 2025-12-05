@@ -46,6 +46,8 @@ export interface TokenResponse {
   access_token: string;
   refresh_token?: string;
   token_type: string;
+  expires_in?: number;
+  partner?: PartnerResponse; // Partner data may be included in login response
 }
 
 export interface ForgotPasswordRequest {
@@ -67,13 +69,17 @@ export const authService = {
   // Login partner
   login: async (data: PartnerLoginRequest): Promise<TokenResponse> => {
     const response = await apiClient.post('/auth/login', data);
-    const { access_token, refresh_token } = response.data;
+    const { access_token, refresh_token, partner } = response.data;
     
     // Store tokens
     if (typeof window !== 'undefined') {
       localStorage.setItem('partner_access_token', access_token);
       if (refresh_token) {
         localStorage.setItem('partner_refresh_token', refresh_token);
+      }
+      // Store partner data if included in response
+      if (partner) {
+        localStorage.setItem('partner_data', JSON.stringify(partner));
       }
     }
     
@@ -103,6 +109,7 @@ export const authService = {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('partner_access_token');
       localStorage.removeItem('partner_refresh_token');
+      localStorage.removeItem('partner_data');
       window.location.href = '/login';
     }
   },
@@ -120,6 +127,7 @@ export const authService = {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('partner_access_token');
       localStorage.removeItem('partner_refresh_token');
+      localStorage.removeItem('partner_data');
     }
   },
 };

@@ -35,6 +35,7 @@ apiClient.interceptors.response.use(
       if (typeof window !== 'undefined') {
         localStorage.removeItem('partner_access_token');
         localStorage.removeItem('partner_refresh_token');
+        localStorage.removeItem('partner_data');
         // Only redirect if not already on login page
         if (!window.location.pathname.includes('/login')) {
           window.location.href = '/login';
