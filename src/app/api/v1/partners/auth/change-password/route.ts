@@ -14,6 +14,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    console.log('[Change Password] Token received:', token.substring(0, 20) + '...');
+    console.log('[Change Password] Request body:', { current_password: '***', new_password: '***' });
+
     // Validate required fields
     if (!body.current_password || !body.new_password) {
       return NextResponse.json(
@@ -39,6 +42,8 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    console.log('[Change Password] Calling backend:', `${API_URL}/api/v1/partners/auth/change-password`);
+    
     const response = await fetch(`${API_URL}/api/v1/partners/auth/change-password`, {
       method: 'PUT',
       headers: {
@@ -52,6 +57,9 @@ export async function PUT(request: NextRequest) {
     });
 
     const data = await response.json();
+    
+    console.log('[Change Password] Backend response status:', response.status);
+    console.log('[Change Password] Backend response:', JSON.stringify(data).substring(0, 200));
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status });
