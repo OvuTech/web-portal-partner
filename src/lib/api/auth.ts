@@ -56,7 +56,16 @@ export interface ForgotPasswordRequest {
 
 export interface ResetPasswordRequest {
   token: string;
-  password: string;
+  password: string; // Frontend uses 'password', API route transforms to 'new_password'
+}
+
+export interface RefreshTokenRequest {
+  refresh_token: string;
+}
+
+export interface ChangePasswordRequest {
+  current_password: string;
+  new_password: string;
 }
 
 export const authService = {
@@ -95,6 +104,34 @@ export const authService = {
   // Reset password
   resetPassword: async (data: ResetPasswordRequest): Promise<{ message: string }> => {
     const response = await apiClient.post('/v1/partners/auth/reset-password', data);
+    return response.data;
+  },
+
+  // Refresh token
+  refreshToken: async (refreshToken: string): Promise<TokenResponse> => {
+    const response = await apiClient.post('/v1/partners/auth/refresh', {
+      refresh_token: refreshToken,
+    });
+    const { access_token, refresh_token, partner } = response.data;
+    
+    // Store new tokens
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('partner_access_token', access_token);
+      if (refresh_token) {
+        localStorage.setItem('partner_refresh_token', refresh_token);
+      }
+      // Update partner data if included
+      if (partner) {
+        localStorage.setItem('partner_data', JSON.stringify(partner));
+      }
+    }
+    
+    return response.data;
+  },
+
+  // Change password
+  changePassword: async (data: ChangePasswordRequest): Promise<{ message: string }> => {
+    const response = await apiClient.put('/v1/partners/auth/change-password', data);
     return response.data;
   },
 

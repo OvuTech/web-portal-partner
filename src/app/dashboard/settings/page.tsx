@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, User, ChevronDown, Building2, Upload } from 'lucide-react';
+import { Bell, User, ChevronDown, Building2, Upload, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { authService } from '@/lib/api/auth';
+import { toast } from 'sonner';
 
 const settingsTabs = [
   { id: 'profile', name: 'Profile' },
@@ -38,11 +40,75 @@ export default function SettingsPage() {
   const [city, setCity] = useState('Iyanapaja');
   const [state, setState] = useState('Lagos');
   const [zipCode, setZipCode] = useState('10001');
+  
+  // Change password state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const toggleNotification = (id: string) => {
     setNotifications(notifications.map(n => 
       n.id === id ? { ...n, enabled: !n.enabled } : n
     ));
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      toast.error('New password must be at least 8 characters long');
+      return;
+    }
+
+    // Check for special character
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    if (!specialCharRegex.test(newPassword)) {
+      toast.error('New password must contain at least one special character');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      await authService.changePassword({
+        current_password: currentPassword,
+        new_password: newPassword,
+      });
+      toast.success('Password changed successfully');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error: any) {
+      let message = 'Failed to change password. Please try again.';
+      
+      // Handle Pydantic validation errors
+      if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        if (Array.isArray(detail) && detail.length > 0) {
+          message = detail[0].msg || detail[0].message || message;
+        } else if (typeof detail === 'string') {
+          message = detail;
+        } else if (detail.message) {
+          message = detail.message;
+        }
+      } else if (error.message) {
+        message = error.message;
+      }
+      
+      toast.error(message);
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   return (
@@ -333,32 +399,58 @@ export default function SettingsPage() {
             <div className="space-y-6">
               <div className="p-4 bg-gray-50 rounded-lg">
                 <h3 className="text-sm font-semibold text-gray-900 mb-4">Change Password</h3>
-                <div className="space-y-4">
+                <form onSubmit={handleChangePassword} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
                     <input
                       type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                       className="w-full h-11 px-4 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0B5B7A]"
+                      required
+                      disabled={isChangingPassword}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
                     <input
                       type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
                       className="w-full h-11 px-4 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0B5B7A]"
+                      required
+                      minLength={8}
+                      disabled={isChangingPassword}
                     />
+                    <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters long and contain at least one special character</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
                     <input
                       type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       className="w-full h-11 px-4 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0B5B7A]"
+                      required
+                      minLength={8}
+                      disabled={isChangingPassword}
                     />
                   </div>
-                  <button className="h-10 px-6 bg-[#0B5B7A] text-white text-sm font-medium rounded-lg hover:bg-[#014d6b] transition-colors">
-                    Update Password
+                  <button
+                    type="submit"
+                    disabled={isChangingPassword}
+                    className="h-10 px-6 bg-[#0B5B7A] text-white text-sm font-medium rounded-lg hover:bg-[#014d6b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isChangingPassword ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      'Update Password'
+                    )}
                   </button>
-                </div>
+                </form>
               </div>
 
               <div className="p-4 bg-gray-50 rounded-lg">

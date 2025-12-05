@@ -40,6 +40,13 @@ function ResetPasswordContent() {
       return;
     }
 
+    // Check for special character
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    if (!specialCharRegex.test(password)) {
+      setError('Password must contain at least one special character');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -61,7 +68,24 @@ function ResetPasswordContent() {
         router.push('/login');
       }, 2000);
     } catch (error: any) {
-      const message = error.response?.data?.detail || error.message || 'Failed to reset password. Please try again.';
+      let message = 'Failed to reset password. Please try again.';
+      
+      // Handle Pydantic validation errors
+      if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        if (Array.isArray(detail) && detail.length > 0) {
+          // Pydantic validation error format
+          const firstError = detail[0];
+          message = firstError.msg || firstError.message || message;
+        } else if (typeof detail === 'string') {
+          message = detail;
+        } else if (detail.message) {
+          message = detail.message;
+        }
+      } else if (error.message) {
+        message = error.message;
+      }
+      
       setError(message);
       toast.error(message);
     } finally {
@@ -160,7 +184,7 @@ function ResetPasswordContent() {
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
-            <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters long</p>
+            <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters long and contain at least one special character</p>
           </div>
 
           {/* Confirm Password */}
