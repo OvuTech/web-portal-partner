@@ -5,17 +5,23 @@ const API_URL = process.env.API_URL || 'https://ovu-transport-staging.fly.dev';
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const token = request.headers.get('authorization');
+    // Next.js lowercases header names, so use lowercase 'authorization'
+    const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
     
-    if (!token) {
+    if (!authHeader) {
+      console.error('[Change Password] No authorization header found');
+      console.log('[Change Password] Available headers:', Array.from(request.headers.entries()));
       return NextResponse.json(
         { detail: 'Authorization token is required' },
         { status: 401 }
       );
     }
 
-    console.log('[Change Password] Token received:', token.substring(0, 20) + '...');
-    console.log('[Change Password] Request body:', { current_password: '***', new_password: '***' });
+    // Ensure token has Bearer prefix
+    const token = authHeader.startsWith('Bearer ') ? authHeader : `Bearer ${authHeader}`;
+    
+    console.log('[Change Password] Token received:', token.substring(0, 30) + '...');
+    console.log('[Change Password] Request body keys:', Object.keys(body));
 
     // Validate required fields
     if (!body.current_password || !body.new_password) {
