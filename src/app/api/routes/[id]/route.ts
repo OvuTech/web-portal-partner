@@ -4,16 +4,17 @@ const API_URL = process.env.API_URL || 'https://ovu-transport-staging.fly.dev';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = request.headers.get('authorization');
     
     if (!token) {
       return NextResponse.json({ detail: 'No token provided' }, { status: 401 });
     }
 
-    const response = await fetch(`${API_URL}/api/v1/operators/routes/${params.id}`, {
+    const response = await fetch(`${API_URL}/api/v1/operators/routes/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -39,9 +40,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = request.headers.get('authorization');
     const body = await request.json();
     
@@ -49,7 +51,7 @@ export async function PUT(
       return NextResponse.json({ detail: 'No token provided' }, { status: 401 });
     }
 
-    const response = await fetch(`${API_URL}/api/v1/operators/routes/${params.id}`, {
+    const response = await fetch(`${API_URL}/api/v1/operators/routes/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -76,16 +78,17 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = request.headers.get('authorization');
     
     if (!token) {
       return NextResponse.json({ detail: 'No token provided' }, { status: 401 });
     }
 
-    const response = await fetch(`${API_URL}/api/v1/operators/routes/${params.id}`, {
+    const response = await fetch(`${API_URL}/api/v1/operators/routes/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
