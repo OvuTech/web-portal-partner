@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -24,36 +25,40 @@ const stats = [
     date: '18th October 2025',
     change: '+12.5%',
     trend: 'up',
-    icon: Ticket,
+    icon: '/icons/bookings.svg',
     iconBg: '#0B5B7A1A', // Light blue
     iconColor: 'text-white',
+    useImage: true,
   },
   {
     title: 'Seats Filled',
     value: '20',
     change: '+12.5%',
     trend: 'up',
-    icon: Users,
+    icon: '/icons/seats.svg',
     iconBg: '#FFC1071A', // Light yellow
     iconColor: 'text-gray-700',
+    useImage: true,
   },
   {
     title: 'Pending Confirmations',
     value: '50',
     change: '-12.5%',
     trend: 'down',
-    icon: Calendar,
+    icon: '/icons/upload.svg',
     iconBg: '#4CAF501A', // Light green
     iconColor: 'text-gray-700',
+    useImage: true,
   },
   {
     title: 'Total Revenue & Payout',
     value: formatCurrency(1500000),
     change: '+12.5%',
     trend: 'up',
-    icon: DollarSign,
+    icon: '/icons/wallet.svg',
     iconBg: '#0B5B7A1A', // Light blue
     iconColor: 'text-gray-700',
+    useImage: true,
   },
 ];
 
@@ -62,19 +67,22 @@ const actionCards = [
     title: 'Upload Schedule',
     description: 'Add new bus/flight schedules manually.',
     buttonText: 'Upload',
-    icon: Upload,
+    icon: '/icons/uploads.svg',
+    useImage: true,
   },
   {
     title: 'View Payout Summary',
     description: 'Review settlements & reconciliation reports.',
     buttonText: 'Open',
-    icon: Wallet,
+    icon: '/icons/wallet.svg',
+    useImage: true,
   },
   {
     title: 'Download Manifest',
     description: 'Get today\'s passenger list for confirmed trips.',
     buttonText: 'Download',
     icon: FileText,
+    useImage: false,
   },
 ];
 
@@ -123,7 +131,7 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat) => {
-          const Icon = stat.icon;
+          const Icon = typeof stat.icon === 'string' ? null : stat.icon;
           return (
             <div 
               key={stat.title} 
@@ -141,7 +149,17 @@ export default function DashboardPage() {
                         className="w-[42px] h-[42px] rounded-[5px] flex items-center justify-center flex-shrink-0"
                         style={{ backgroundColor: stat.iconBg }}
                       >
-                        <Icon className={`h-6 w-6 ${stat.iconColor}`} />
+                        {stat.useImage ? (
+                          <Image
+                            src={stat.icon as string}
+                            alt={stat.title}
+                            width={stat.title === 'Seats Filled' ? 32 : 28}
+                            height={stat.title === 'Seats Filled' ? 32 : 28}
+                            className={stat.title === 'Seats Filled' ? 'h-8 w-8' : 'h-7 w-7'}
+                          />
+                        ) : (
+                          Icon && <Icon className={`h-7 w-7 ${stat.iconColor}`} />
+                        )}
                       </div>
                     </div>
                     {stat.title === 'Total Bookings' && stat.date ? (
@@ -169,18 +187,28 @@ export default function DashboardPage() {
       {/* Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {actionCards.map((card) => {
-          const Icon = card.icon;
+          const Icon = typeof card.icon === 'string' ? null : card.icon;
           return (
             <div key={card.title} className="bg-blue-50 rounded-xl border border-gray-200 p-4 md:p-6">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-lg bg-ovu-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Icon className="h-5 w-5 text-ovu-primary" />
+                  {card.useImage ? (
+                    <Image
+                      src={card.icon as string}
+                      alt={card.title}
+                      width={24}
+                      height={24}
+                      className="h-6 w-6"
+                    />
+                  ) : (
+                    Icon && <Icon className="h-6 w-6 text-ovu-primary" />
+                  )}
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">{card.title}</h3>
                   <p className="text-sm text-gray-500">{card.description}</p>
                 </div>
-                <button className="bg-ovu-primary text-white py-2 px-4 rounded-lg hover:bg-ovu-secondary transition-colors font-medium whitespace-nowrap">
+                <button className="bg-ovu-primary text-white py-2 px-4 rounded-lg hover:bg-ovu-secondary transition-colors font-medium whitespace-nowrap cursor-pointer">
                   {card.buttonText}
                 </button>
               </div>
@@ -265,7 +293,7 @@ export default function DashboardPage() {
             <Bell className="h-5 w-5 text-gray-600" />
             <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
           </div>
-          <button className="text-sm text-ovu-primary font-medium hover:underline">
+          <button className="text-sm text-ovu-primary font-medium hover:underline cursor-pointer">
             View all
           </button>
         </div>

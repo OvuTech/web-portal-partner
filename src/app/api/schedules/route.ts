@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
 
     console.log('[Partner Schedules] Fetching schedules');
 
-    // Based on Swagger docs - schedules endpoint
-    const response = await fetch(`${API_URL}/api/v1/schedules?${searchParams.toString()}`, {
+    // Based on Swagger docs - operators schedules endpoint
+    const response = await fetch(`${API_URL}/api/v1/operators/schedules?${searchParams.toString()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ detail: 'No token provided' }, { status: 401 });
     }
 
-    const response = await fetch(`${API_URL}/api/v1/schedules`, {
+    const response = await fetch(`${API_URL}/api/v1/operators/schedules`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

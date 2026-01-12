@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Loader2, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { authService } from '@/lib/api/auth';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -62,16 +64,16 @@ export default function ForgotPasswordPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
-                    className="w-full h-12 px-4 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20 transition-colors"
+                    className="w-full h-12"
                     disabled={isLoading}
                   />
                 </div>

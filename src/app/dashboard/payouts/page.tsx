@@ -13,6 +13,15 @@ import {
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 import * as Dialog from '@radix-ui/react-dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface Payout {
   id: string;
@@ -441,16 +450,16 @@ export default function PayoutsPage() {
       {/* Tabs and Filters */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         {/* Tabs */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 bg-[#F5F5F5] p-1 rounded-lg">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as 'summary' | 'reconciliation' | 'disputes')}
               className={cn(
-                'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                'pl-4 pr-4 pt-2 pb-2 rounded-lg text-sm font-medium transition-colors text-center cursor-pointer',
                 activeTab === tab.id
                   ? 'bg-[#0B5B7A] text-white'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                  : 'text-gray-600 hover:text-gray-900'
               )}
             >
               {tab.label}
@@ -460,27 +469,42 @@ export default function PayoutsPage() {
 
         {/* Filters */}
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white hover:bg-gray-50">
+          <button className="flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
             <ArrowUpDown className="h-4 w-4" />
             Status
           </button>
-          <select className="h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-[#0B5B7A] focus:ring-1 focus:ring-[#0B5B7A]">
-            <option>Date range</option>
-            <option>Today</option>
-            <option>This Week</option>
-            <option>This Month</option>
-          </select>
-          <select className="h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-[#0B5B7A] focus:ring-1 focus:ring-[#0B5B7A]">
-            <option>Route</option>
-            <option>Lagos - Abuja</option>
-            <option>Lagos - Port Harcourt</option>
-            <option>Lagos - Benin</option>
-          </select>
-          <select className="h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-[#0B5B7A] focus:ring-1 focus:ring-[#0B5B7A]">
-            <option>Export</option>
-            <option>Export as CSV</option>
-            <option>Export as PDF</option>
-          </select>
+          <Select defaultValue="date-range">
+            <SelectTrigger className="h-10 w-full min-w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="date-range">Date range</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="this-week">This Week</SelectItem>
+              <SelectItem value="this-month">This Month</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select defaultValue="route">
+            <SelectTrigger className="h-10 w-full min-w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="route">Route</SelectItem>
+              <SelectItem value="lagos-abuja">Lagos - Abuja</SelectItem>
+              <SelectItem value="lagos-port-harcourt">Lagos - Port Harcourt</SelectItem>
+              <SelectItem value="lagos-benin">Lagos - Benin</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select defaultValue="export">
+            <SelectTrigger className="h-10 w-full min-w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="export">Export</SelectItem>
+              <SelectItem value="csv">Export as CSV</SelectItem>
+              <SelectItem value="pdf">Export as PDF</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -546,7 +570,7 @@ export default function PayoutsPage() {
                       {payout.status === 'Processing' ? (
                         <span className="text-sm text-gray-400">-</span>
                       ) : (
-                        <button className="text-sm text-[#0B5B7A] hover:underline font-medium">
+                        <button className="text-sm text-[#0B5B7A] hover:underline font-medium cursor-pointer">
                           View Breakdown
                         </button>
                       )}
@@ -624,10 +648,10 @@ export default function PayoutsPage() {
 
         {/* Pagination */}
         <div className="flex items-center justify-center gap-1 p-4 border-t border-gray-100">
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             «
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             <ChevronLeft className="h-4 w-4" />
           </button>
           {[1, 2, 3, 4, 5, 6].map((page) => (
@@ -656,10 +680,10 @@ export default function PayoutsPage() {
           >
             10
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             <ChevronRight className="h-4 w-4" />
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             »
           </button>
         </div>
@@ -792,24 +816,29 @@ export default function PayoutsPage() {
 
                 {/* Operator's Record */}
                 <div className="mb-4">
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">
+                  <Label htmlFor="operatorRecord" className="text-xs font-medium text-gray-500 mb-1 block">
                     Operator's Record
-                  </label>
-                  <input
-                    type="text"
-                    value={operatorRecord}
-                    onChange={(e) => setOperatorRecord(e.target.value)}
-                    placeholder="₦0.00"
-                    className="w-full h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-[#0B5B7A] focus:ring-1 focus:ring-[#0B5B7A]"
-                  />
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-700 z-10">₦</span>
+                    <Input
+                      id="operatorRecord"
+                      type="text"
+                      value={operatorRecord}
+                      onChange={(e) => setOperatorRecord(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full h-10 pl-8"
+                    />
+                  </div>
                 </div>
 
                 {/* Reason for Difference */}
                 <div className="mb-4">
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">
+                  <Label htmlFor="reasonForDifference" className="text-xs font-medium text-gray-500 mb-1 block">
                     Reason for Difference
-                  </label>
+                  </Label>
                   <textarea
+                    id="reasonForDifference"
                     value={reasonForDifference}
                     onChange={(e) => setReasonForDifference(e.target.value)}
                     placeholder="Type here"

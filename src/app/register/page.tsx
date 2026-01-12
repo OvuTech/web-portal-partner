@@ -7,6 +7,15 @@ import Link from 'next/link';
 import { Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { authService } from '@/lib/api/auth';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -112,103 +121,113 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
-                <input
+                <Label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">First Name *</Label>
+                <Input
+                  id="firstName"
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   placeholder="First name"
-                  className="w-full h-12 px-4 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20 transition-colors"
+                  className="w-full h-12"
                   disabled={isLoading}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
-                <input
+                <Label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">Last Name *</Label>
+                <Input
+                  id="lastName"
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   placeholder="Last name"
-                  className="w-full h-12 px-4 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20 transition-colors"
+                  className="w-full h-12"
                   disabled={isLoading}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
-              <input
+              <Label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-2">Company Name *</Label>
+              <Input
+                id="companyName"
                 type="text"
                 value={formData.companyName}
                 onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                 placeholder="Enter your company name"
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                className="w-full h-12"
                 disabled={isLoading}
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Business Type *</label>
-              <select
+              <Label htmlFor="businessType" className="block text-sm font-medium text-gray-700 mb-2">Business Type *</Label>
+              <Select
                 value={formData.businessType}
-                onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20 transition-colors"
+                onValueChange={(value) => setFormData({ ...formData, businessType: value })}
                 disabled={isLoading}
                 required
               >
-                <option value="">Select business type</option>
-                <option value="travel_agency">Travel Agency</option>
-                <option value="corporate">Corporate</option>
-                <option value="reseller">Reseller</option>
-              </select>
+                <SelectTrigger id="businessType" className="w-full h-12">
+                  <SelectValue placeholder="Select business type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="travel_agency">Travel Agency</SelectItem>
+                  <SelectItem value="corporate">Corporate</SelectItem>
+                  <SelectItem value="reseller">Reseller</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-              <input
+              <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address *</Label>
+              <Input
+                id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="Enter your email"
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                className="w-full h-12"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
-              <input
+              <Label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</Label>
+              <Input
+                id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="+234 800 000 0000"
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                className="w-full h-12"
                 disabled={isLoading}
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
-              <input
+              <Label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">Website</Label>
+              <Input
+                id="website"
                 type="url"
                 value={formData.website}
                 onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                 placeholder="https://example.com"
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                className="w-full h-12"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tax ID</label>
-              <input
+              <Label htmlFor="taxId" className="block text-sm font-medium text-gray-700 mb-2">Tax ID</Label>
+              <Input
+                id="taxId"
                 type="text"
                 value={formData.taxId}
                 onChange={(e) => setFormData({ ...formData, taxId: e.target.value })}
                 placeholder="Enter your tax ID (optional)"
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                className="w-full h-12"
                 disabled={isLoading}
               />
             </div>
@@ -227,27 +246,29 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Expected Monthly Volume</label>
-              <input
+              <Label htmlFor="expectedMonthlyVolume" className="block text-sm font-medium text-gray-700 mb-2">Expected Monthly Volume</Label>
+              <Input
+                id="expectedMonthlyVolume"
                 type="number"
                 value={formData.expectedMonthlyVolume}
                 onChange={(e) => setFormData({ ...formData, expectedMonthlyVolume: e.target.value })}
                 placeholder="0"
                 min="0"
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                className="w-full h-12"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password * (min 8 characters)</label>
+              <Label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password * (min 8 characters)</Label>
               <div className="relative">
-                <input
+                <Input
+                  id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Create a strong password"
-                  className="w-full h-12 px-4 pr-12 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                  className="w-full h-12 pr-12"
                   disabled={isLoading}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -257,13 +278,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password *</label>
-              <input
+              <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">Confirm Password *</Label>
+              <Input
+                id="confirmPassword"
                 type="password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 placeholder="Confirm your password"
-                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-ovu-primary focus:ring-2 focus:ring-ovu-primary/20"
+                className="w-full h-12"
                 disabled={isLoading}
               />
             </div>

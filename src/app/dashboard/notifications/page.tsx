@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, CheckCircle, AlertCircle, Info, Trash2, CheckCheck, Filter } from 'lucide-react';
+import Image from 'next/image';
+import { Bell, CheckCircle, AlertCircle, Info, CheckCheck, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Notification {
@@ -53,7 +54,7 @@ export default function NotificationsPage() {
       <div className="flex justify-end">
         <button
           onClick={markAllAsRead}
-          className="flex items-center gap-2 h-10 px-4 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50"
+          className="flex items-center gap-2 h-10 px-4 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 cursor-pointer"
         >
           <CheckCheck className="h-4 w-4" />
           Mark all as read
@@ -61,16 +62,26 @@ export default function NotificationsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2">
+      <div className="bg-[#F5F5F5] rounded-lg p-1 flex gap-2">
         <button
           onClick={() => setFilter('all')}
-          className={cn('px-4 py-2 text-sm font-medium rounded-lg', filter === 'all' ? 'bg-ovu-primary text-white' : 'text-gray-600 hover:bg-gray-100')}
+          className={cn(
+            'px-4 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer text-center',
+            filter === 'all' 
+              ? 'bg-[#0B5B7A] text-white' 
+              : 'bg-transparent text-gray-600 hover:bg-gray-100'
+          )}
         >
           All
         </button>
         <button
           onClick={() => setFilter('unread')}
-          className={cn('px-4 py-2 text-sm font-medium rounded-lg', filter === 'unread' ? 'bg-ovu-primary text-white' : 'text-gray-600 hover:bg-gray-100')}
+          className={cn(
+            'px-4 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer text-center',
+            filter === 'unread' 
+              ? 'bg-[#0B5B7A] text-white' 
+              : 'bg-transparent text-gray-600 hover:bg-gray-100'
+          )}
         >
           Unread ({unreadCount})
         </button>
@@ -111,20 +122,26 @@ export default function NotificationsPage() {
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
                         {!notification.read && (
-                          <button
-                            onClick={() => markAsRead(notification.id)}
-                            className="p-2 hover:bg-gray-100 rounded-lg"
-                            title="Mark as read"
-                          >
+                        <button
+                          onClick={() => markAsRead(notification.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
+                          title="Mark as read"
+                        >
                             <CheckCircle className="h-4 w-4 text-gray-400" />
                           </button>
                         )}
                         <button
                           onClick={() => deleteNotification(notification.id)}
-                          className="p-2 hover:bg-red-50 rounded-lg"
+                          className="p-2 hover:bg-red-50 rounded-lg cursor-pointer"
                           title="Delete"
                         >
-                          <Trash2 className="h-4 w-4 text-red-400" />
+                          <Image
+                            src="/icons/delete.svg"
+                            alt="Delete"
+                            width={24}
+                            height={24}
+                            className="h-6 w-6"
+                          />
                         </button>
                       </div>
                     </div>

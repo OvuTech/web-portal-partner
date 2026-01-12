@@ -32,19 +32,36 @@ export interface Vehicle {
 
 export interface CreateScheduleRequest {
   route_id: string;
-  vehicle_id: string;
-  departure_time: string;
+  departure_date: string; // ISO 8601 datetime
+  arrival_date: string; // ISO 8601 datetime
+  vehicle_number?: string;
+  vehicle_type?: string;
+  driver_name?: string;
+  driver_phone?: string;
+  total_seats: number;
   price: number;
-  recurring?: boolean;
-  days_of_week?: string[];
+  amenities?: string[];
+  notes?: string;
 }
 
 export const schedulesService = {
   // Get all schedules
-  getSchedules: async (params?: { date?: string; status?: string }): Promise<Schedule[]> => {
+  getSchedules: async (params?: {
+    status?: string;
+    route_id?: string;
+    start_date?: string;
+    end_date?: string;
+    skip?: number;
+    limit?: number;
+  }): Promise<Schedule[]> => {
     const queryParams = new URLSearchParams();
-    if (params?.date) queryParams.append('date', params.date);
     if (params?.status) queryParams.append('status', params.status);
+    if (params?.route_id) queryParams.append('route_id', params.route_id);
+    if (params?.start_date) queryParams.append('start_date', params.start_date);
+    if (params?.end_date) queryParams.append('end_date', params.end_date);
+    if (params?.skip) queryParams.append('skip', String(params.skip));
+    if (params?.limit) queryParams.append('limit', String(params.limit));
+    
     const response = await apiClient.get(`/schedules?${queryParams.toString()}`);
     return response.data;
   },
@@ -63,13 +80,37 @@ export const schedulesService = {
 
   // Update schedule
   updateSchedule: async (id: string, data: Partial<CreateScheduleRequest>): Promise<Schedule> => {
-    const response = await apiClient.patch(`/schedules/${id}`, data);
+    const response = await apiClient.put(`/schedules/${id}`, data);
     return response.data;
   },
 
   // Cancel schedule
   cancelSchedule: async (id: string): Promise<void> => {
-    await apiClient.post(`/schedules/${id}/cancel`);
+    await apiClient.delete(`/schedules/${id}`);
+  },
+
+  // Bulk create schedules (for CSV upload)
+  bulkCreateSchedules: async (schedules: CreateScheduleRequest[]): Promise<{
+    success: Schedule[];
+    errors: Array<{ row: number; error: string; data: CreateScheduleRequest }>;
+  }> => {
+    const success: Schedule[] = [];
+    const errors: Array<{ row: number; error: string; data: CreateScheduleRequest }> = [];
+
+    for (let i = 0; i < schedules.length; i++) {
+      try {
+        const schedule = await schedulesService.createSchedule(schedules[i]);
+        success.push(schedule);
+      } catch (error: any) {
+        errors.push({
+          row: i + 1,
+          error: error.response?.data?.detail || error.message || 'Unknown error',
+          data: schedules[i],
+        });
+      }
+    }
+
+    return { success, errors };
   },
 };
 

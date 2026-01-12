@@ -5,13 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard,
-  CalendarDays,
-  Ticket,
-  FileText,
-  Upload,
-  Settings,
-  Bell,
   Menu,
   X,
   ChevronDown,
@@ -26,13 +19,13 @@ interface DashboardLayoutProps {
 }
 
 const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Bookings', href: '/dashboard/bookings', icon: Ticket, badge: 10 },
-  { name: 'Schedules & Inventory', href: '/dashboard/schedules', icon: CalendarDays },
-  { name: 'Payouts & Reports', href: '/dashboard/payouts', icon: FileText },
-  { name: 'Uploads / Manifest', href: '/dashboard/uploads', icon: Upload },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
-  { name: 'Notifications', href: '/dashboard/notifications', icon: Bell, badge: 10 },
+  { name: 'Dashboard', href: '/dashboard', icon: '/icons/dashboard.svg' },
+  { name: 'Bookings', href: '/dashboard/bookings', icon: '/icons/bookings.svg', badge: 10 },
+  { name: 'Schedules & Inventory', href: '/dashboard/schedules', icon: '/icons/schedule.svg' },
+  { name: 'Payouts & Reports', href: '/dashboard/payouts', icon: '/icons/wallet.svg' },
+  { name: 'Uploads / Manifest', href: '/dashboard/uploads', icon: '/icons/upload.svg' },
+  { name: 'Settings', href: '/dashboard/settings', icon: '/icons/settings.svg' },
+  { name: 'Notifications', href: '/dashboard/notifications', icon: '/icons/notification.svg', badge: 10 },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
@@ -94,7 +87,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Navigation */}
           <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
             {navigationItems.map((item) => {
-              const Icon = item.icon;
               const active = isActive(item.href);
 
               return (
@@ -109,7 +101,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   )}
                 >
-                  <Icon className={cn('h-5 w-5', active ? 'text-white' : 'text-gray-400')} />
+                  <Image
+                    src={item.icon}
+                    alt={item.name}
+                    width={20}
+                    height={20}
+                    className={cn('h-5 w-5', active ? 'brightness-0 invert' : 'opacity-60')}
+                  />
                   <span className="flex-1">{item.name}</span>
                   {item.badge && (
                     <span className={cn(
@@ -150,7 +148,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="flex items-center gap-3 flex-1">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900"
+                className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900 cursor-pointer"
               >
                 <Menu className="h-5 w-5" />
               </button>
@@ -184,15 +182,21 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </p>
 
               {/* Notifications */}
-              <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                <Bell className="h-5 w-5" />
+              <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                <Image
+                  src="/icons/notification.svg"
+                  alt="Notifications"
+                  width={20}
+                  height={20}
+                  className="h-5 w-5"
+                />
               </button>
 
               {/* User Menu */}
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="w-9 h-9 rounded-full bg-[#0B5B7A] flex items-center justify-center text-white text-sm font-semibold"
+                  className="w-9 h-9 rounded-full bg-[#0B5B7A] flex items-center justify-center text-white text-sm font-semibold cursor-pointer"
                 >
                   {partner?.first_name?.charAt(0) || 'A'}{partner?.last_name?.charAt(0) || 'O'}
                 </button>
@@ -226,7 +230,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                           setUserMenuOpen(false);
                           logout();
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
                       >
                         <LogOut className="h-4 w-4" />
                         Sign Out

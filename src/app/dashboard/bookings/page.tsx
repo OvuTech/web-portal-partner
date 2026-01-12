@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Search, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 import * as Dialog from '@radix-ui/react-dialog';
+import { Input } from '@/components/ui/input';
 
 interface Booking {
   id: string;
@@ -58,21 +59,21 @@ export default function BookingsPage() {
           {/* Search and Filters */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
+              <Input
                 type="text"
                 placeholder="search by passenger name, booking ID, or route."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 bg-gray-50 text-sm placeholder:text-gray-400 focus:outline-none focus:border-[#0B5B7A] focus:bg-white focus:ring-1 focus:ring-[#0B5B7A]"
+                className="w-full h-10 pl-10 bg-gray-50 focus:bg-white"
               />
             </div>
             <div className="flex gap-2">
-              <button className="flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">
                 <SlidersHorizontal className="h-4 w-4" />
                 Filters
               </button>
-              <button className="flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 h-10 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">
                 Cheapest
                 <ChevronDown className="h-4 w-4" />
               </button>
@@ -133,10 +134,10 @@ export default function BookingsPage() {
 
         {/* Pagination */}
         <div className="flex items-center justify-center gap-1 p-4 border-t border-gray-100">
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             «
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             <ChevronLeft className="h-4 w-4" />
           </button>
           {[1, 2, 3, 4, 5, 6].map((page) => (
@@ -165,10 +166,10 @@ export default function BookingsPage() {
           >
             10
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             <ChevronRight className="h-4 w-4" />
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             »
           </button>
         </div>
@@ -267,10 +268,10 @@ export default function BookingsPage() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t border-gray-100">
-                  <button className="flex-1 h-10 bg-[#0B5B7A] text-white text-sm font-medium rounded-lg hover:bg-[#014d6b] transition-colors">
+                  <button className="flex-1 h-10 bg-[#0B5B7A] text-white text-sm font-medium rounded-lg hover:bg-[#014d6b] transition-colors cursor-pointer">
                     Confirm Seat
                   </button>
-                  <button className="flex-1 h-10 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                  <button className="flex-1 h-10 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                     Decline Booking
                   </button>
                 </div>

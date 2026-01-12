@@ -167,6 +167,17 @@ export const authService = {
       localStorage.removeItem('partner_data');
     }
   },
+
+  // Register partner as operator
+  registerAsOperator: async (data: {
+    company_name?: string;
+    business_type?: string;
+    license_number?: string;
+    address?: string;
+  }): Promise<any> => {
+    const response = await apiClient.post('/operators/register-operator', data);
+    return response.data;
+  },
 };
 
 export default authService;

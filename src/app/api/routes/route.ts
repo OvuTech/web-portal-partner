@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ detail: 'No token provided' }, { status: 401 });
     }
 
-    const response = await fetch(`${API_URL}/api/v1/partners/transactions?${searchParams.toString()}`, {
+    console.log('[Partner Routes] Fetching routes');
+    console.log('[Partner Routes] Token (first 30 chars):', token.substring(0, 30) + '...');
+
+    const response = await fetch(`${API_URL}/api/v1/operators/routes?${searchParams.toString()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -21,15 +24,28 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
 
+    console.log('[Partner Routes] Response status:', response.status);
+    console.log('[Partner Routes] Response data:', JSON.stringify(data).substring(0, 200));
+
     if (!response.ok) {
+      // If it's a "User not found" error, provide more helpful message
+      if (data.detail?.includes('User not found') || data.detail?.includes('not found')) {
+        return NextResponse.json(
+          { 
+            detail: 'User not found. You may need to register as an operator first. Please contact support or use the operator registration endpoint.',
+            original_error: data.detail 
+          },
+          { status: response.status }
+        );
+      }
       return NextResponse.json(data, { status: response.status });
     }
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Get transactions error:', error);
+    console.error('[Partner Routes] Error:', error);
     return NextResponse.json(
-      { detail: 'Failed to fetch transactions' },
+      { detail: 'Failed to fetch routes' },
       { status: 500 }
     );
   }
@@ -44,7 +60,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ detail: 'No token provided' }, { status: 401 });
     }
 
-    const response = await fetch(`${API_URL}/api/v1/partners/payouts/request`, {
+    console.log('[Partner Routes] Creating route');
+
+    const response = await fetch(`${API_URL}/api/v1/operators/routes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,15 +77,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(data, { status: response.status });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Request payout error:', error);
+    console.error('[Partner Routes] Create error:', error);
     return NextResponse.json(
-      { detail: 'Failed to request payout' },
+      { detail: 'Failed to create route' },
       { status: 500 }
     );
   }
 }
-
-
 

@@ -4,6 +4,14 @@ import { useState } from 'react';
 import { Search, Download, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import * as Dialog from '@radix-ui/react-dialog';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ManifestTrip {
   id: string;
@@ -160,27 +168,37 @@ export default function UploadsPage() {
       {/* Search and Filters */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
+          <Input
             type="text"
             placeholder="Search with booking ID or Trip Name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 text-sm placeholder:text-gray-400 focus:outline-none focus:border-[#0B5B7A] focus:ring-1 focus:ring-[#0B5B7A]"
+            className="w-full h-10 pl-10"
           />
         </div>
-        <select className="h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-[#0B5B7A] focus:ring-1 focus:ring-[#0B5B7A]">
-          <option>Date range</option>
-          <option>Today</option>
-          <option>This Week</option>
-          <option>This Month</option>
-        </select>
-        <select className="h-10 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-[#0B5B7A] focus:ring-1 focus:ring-[#0B5B7A]">
-          <option>Route</option>
-          <option>Lagos - Abuja</option>
-          <option>Lagos - Port Harcourt</option>
-          <option>Lagos - Benin</option>
-        </select>
+        <Select defaultValue="date-range">
+          <SelectTrigger className="h-10 w-full min-w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="date-range">Date range</SelectItem>
+            <SelectItem value="today">Today</SelectItem>
+            <SelectItem value="this-week">This Week</SelectItem>
+            <SelectItem value="this-month">This Month</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select defaultValue="route">
+          <SelectTrigger className="h-10 w-full min-w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="route">Route</SelectItem>
+            <SelectItem value="lagos-abuja">Lagos - Abuja</SelectItem>
+            <SelectItem value="lagos-port-harcourt">Lagos - Port Harcourt</SelectItem>
+            <SelectItem value="lagos-benin">Lagos - Benin</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
@@ -219,7 +237,7 @@ export default function UploadsPage() {
                       {trip.status === 'Generated' ? (
                         <button
                           onClick={() => handleDownload(trip)}
-                          className="flex items-center gap-1.5 text-sm text-[#0B5B7A] hover:underline font-medium"
+                          className="flex items-center gap-1.5 text-sm text-[#0B5B7A] hover:underline font-medium cursor-pointer"
                         >
                           <Download className="h-4 w-4" />
                           Download
@@ -241,10 +259,10 @@ export default function UploadsPage() {
 
         {/* Pagination */}
         <div className="flex items-center justify-center gap-1 p-4 border-t border-gray-100">
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             «
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             <ChevronLeft className="h-4 w-4" />
           </button>
           {[1, 2, 3, 4, 5, 6].map((page) => (
@@ -252,7 +270,7 @@ export default function UploadsPage() {
               key={page}
               onClick={() => setCurrentPage(page)}
               className={cn(
-                'w-8 h-8 flex items-center justify-center text-sm rounded transition-colors',
+                'w-8 h-8 flex items-center justify-center text-sm rounded transition-colors cursor-pointer',
                 currentPage === page
                   ? 'bg-[#0B5B7A] text-white'
                   : 'text-gray-600 hover:bg-gray-100'
@@ -265,7 +283,7 @@ export default function UploadsPage() {
           <button
             onClick={() => setCurrentPage(10)}
             className={cn(
-              'w-8 h-8 flex items-center justify-center text-sm rounded transition-colors',
+              'w-8 h-8 flex items-center justify-center text-sm rounded transition-colors cursor-pointer',
               currentPage === 10
                 ? 'bg-[#0B5B7A] text-white'
                 : 'text-gray-600 hover:bg-gray-100'
@@ -273,10 +291,10 @@ export default function UploadsPage() {
           >
             10
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             <ChevronRight className="h-4 w-4" />
           </button>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer">
             »
           </button>
         </div>
@@ -344,19 +362,19 @@ export default function UploadsPage() {
                 <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="h-10 px-4 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                    className="h-10 px-4 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
                   >
                     Send to Email
                   </button>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="h-10 px-4 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                    className="h-10 px-4 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
                   >
                     Download CSV
                   </button>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="h-10 px-4 bg-[#0B5B7A] text-white text-sm font-medium rounded-lg hover:bg-[#094A63] transition-colors"
+                    className="h-10 px-4 bg-[#0B5B7A] text-white text-sm font-medium rounded-lg hover:bg-[#094A63] transition-colors cursor-pointer"
                   >
                     Download PDF
                   </button>
