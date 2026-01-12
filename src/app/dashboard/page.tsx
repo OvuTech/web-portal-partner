@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Image from 'next/image';
 import { 
   TrendingUp, 
@@ -131,7 +132,7 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat) => {
-          const Icon = typeof stat.icon === 'string' ? null : stat.icon;
+          const Icon = typeof stat.icon === 'string' ? null : (stat.icon as React.ComponentType<{ className?: string }> | null);
           return (
             <div 
               key={stat.title} 
